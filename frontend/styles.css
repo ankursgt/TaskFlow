@@ -1,0 +1,403 @@
+/* =========================================================
+   Base
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background: #f5f7fa;
+    color: #1f2937;
+}
+
+
+/* =========================================================
+   Sticky Header
+   ========================================================= */
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    margin-bottom: 24px;
+    padding: 20px 32px;
+
+    border-bottom: 1px solid #d1d5db;
+
+    background: #ffffff;
+}
+
+.header-content {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.app-header h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+}
+
+.app-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   Main Container
+   ========================================================= */
+
+.app-container {
+    width: min(1100px, 92%);
+    margin: 0 auto 40px;
+}
+
+
+/* =========================================================
+   Task Form
+   ========================================================= */
+
+.task-form-section {
+    margin-bottom: 28px;
+    padding: 24px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+}
+
+.task-form-section h2 {
+    margin: 0 0 20px;
+}
+
+
+#task-form {
+    display: grid;
+
+    grid-template-columns:
+        2fr
+        1fr
+        1.5fr
+        1fr
+        auto;
+
+    gap: 16px;
+
+    align-items: end;
+}
+
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px #dbeafe;
+}
+
+
+/* =========================================================
+   Validation
+   ========================================================= */
+
+.error-message {
+    position: absolute;
+    bottom: -22px;
+    left: 0;
+
+    height: 18px;
+
+    color: #dc2626;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+
+button {
+    cursor: pointer;
+}
+
+.primary-button {
+    padding: 10px 18px;
+
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.primary-button:hover {
+    background: #1d4ed8;
+}
+
+.secondary-button {
+    padding: 8px 14px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+
+    background: #ffffff;
+}
+
+.secondary-button:hover {
+    background: #f1f5f9;
+}
+
+.delete-button {
+    padding: 8px 14px;
+
+    border: 1px solid #dc2626;
+    border-radius: 5px;
+
+    background: #ffffff;
+    color: #dc2626;
+}
+
+.delete-button:hover {
+    background: #fee2e2;
+}
+
+
+/* =========================================================
+   Task List Container
+   ========================================================= */
+
+.task-list-section {
+    margin-bottom: 30px;
+    padding: 24px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+}
+
+.task-list-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+}
+
+.task-list-header h2 {
+    margin: 0;
+}
+
+.task-count {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   Individual Task
+   ========================================================= */
+
+.task-list {
+    margin: 0;
+    padding: 8px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+
+    background: #f8fafc;
+}
+
+.task-item {
+    margin: 12px;
+    padding: 16px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    background: #ffffff;
+}
+
+.task-item-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 16px;
+}
+
+.task-title {
+    margin: 0;
+
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.task-description {
+    margin: 8px 0;
+
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.task-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+.task-badge {
+    padding: 4px 8px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+
+    font-size: 12px;
+}
+
+.task-actions {
+    display: flex;
+
+    gap: 8px;
+}
+
+.empty-state {
+    margin: 20px 0 0;
+
+    text-align: center;
+
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   Breakpoint 1 - Tablet
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .app-header {
+        padding: 18px 20px;
+    }
+
+    .app-container {
+        width: 94%;
+    }
+
+    #task-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .primary-button {
+        width: 100%;
+    }
+
+    .task-item-header {
+        flex-direction: column;
+    }
+
+    .task-actions {
+        width: 100%;
+    }
+
+    .task-actions button {
+        flex: 1;
+    }
+}
+
+
+/* =========================================================
+   Breakpoint 2 - Mobile
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .app-header {
+        padding: 16px;
+    }
+
+    .app-header h1 {
+        font-size: 22px;
+    }
+
+    .app-container {
+        width: 96%;
+    }
+
+    .task-form-section,
+    .task-list-section {
+        padding: 16px;
+    }
+
+    /* Stack form vertically */
+    #task-form {
+        grid-template-columns: 1fr;
+    }
+
+    .task-list-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .task-item {
+        margin: 8px 0;
+        padding: 12px;
+    }
+
+    .task-actions {
+        flex-direction: column;
+    }
+
+    .task-actions button {
+        width: 100%;
+    }
+}

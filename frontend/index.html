@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Task Manager</title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
+</head>
+
+<body>
+
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Task Manager</h1>
+            <p>Manage your project tasks</p>
+        </div>
+    </header>
+
+
+    <main class="app-container">
+
+        <!-- Add Task Form -->
+        <section
+            class="task-form-section"
+            aria-labelledby="add-task-heading"
+        >
+            <h2 id="add-task-heading">
+                Add Task
+            </h2>
+
+            <form id="task-form" novalidate>
+
+                <div class="form-group">
+                    <label for="title">
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Enter task title"
+                        autocomplete="off"
+                    >
+
+                    <span
+                        id="title-error"
+                        class="error-message"
+                        role="alert"
+                    ></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="priority">
+                        Priority
+                    </label>
+
+                    <select
+                        id="priority"
+                        name="priority"
+                    >
+                        <option value="low">
+                            Low
+                        </option>
+
+                        <option
+                            value="medium"
+                            selected
+                        >
+                            Medium
+                        </option>
+
+                        <option value="high">
+                            High
+                        </option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="due-date">
+                        Due Date
+                    </label>
+
+                    <input
+                        type="text"
+                        id="due-date"
+                        name="due_date"
+                        placeholder="e.g. next friday"
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="project-id">
+                        Project ID
+                    </label>
+
+                    <input
+                        type="number"
+                        id="project-id"
+                        name="project_id"
+                        min="1"
+                        placeholder="Project ID"
+                        value="1"
+                    >
+                </div>
+
+
+                <button
+                    type="submit"
+                    id="submit-button"
+                    class="primary-button"
+                >
+                    Add Task
+                </button>
+
+            </form>
+        </section>
+
+
+        <!-- Task List -->
+        <section
+            class="task-list-section"
+            aria-labelledby="task-list-heading"
+        >
+            <div class="task-list-header">
+                <h2 id="task-list-heading">
+                    Tasks
+                </h2>
+
+                <span
+                    id="task-count"
+                    class="task-count"
+                >
+                    0 tasks
+                </span>
+            </div>
+
+            <div
+                id="task-list"
+                class="task-list"
+            >
+                <!-- Tasks are rendered here by JavaScript -->
+            </div>
+
+            <p
+                id="empty-state"
+                class="empty-state"
+            >
+                No tasks available.
+            </p>
+        </section>
+
+    </main>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>
