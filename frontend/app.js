@@ -14,10 +14,24 @@ const dueDateInput = document.getElementById("due-date");
 const projectIdInput = document.getElementById("project-id");
 
 const titleError = document.getElementById("title-error");
+const projectError = document.getElementById("project-error");
 
 const taskList = document.getElementById("task-list");
 const emptyState = document.getElementById("empty-state");
 const taskCount = document.getElementById("task-count");
+const quickAddForm = document.getElementById("quick-add-form");
+
+const quickDescriptionInput = document.getElementById("quick-description");
+
+const quickProjectInput = document.getElementById("quick-project-id");
+
+const quickDescriptionError = document.getElementById("quick-description-error");
+
+const quickProjectError = document.getElementById("quick-project-error");
+
+const quickAddError = document.getElementById("quick-add-error");
+
+const quickAddButton = document.getElementById("quick-add-button");
 
 
 // =========================================================
@@ -25,6 +39,7 @@ const taskCount = document.getElementById("task-count");
 // =========================================================
 
 let tasks = [];
+let projects = [];
 
 
 // =========================================================
@@ -64,6 +79,189 @@ function loadTasksFromCache() {
 
         return [];
     }
+}
+
+async function loadProjects() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/projects`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load projects."
+            );
+        }
+
+        projects = await response.json();
+
+        populateProjectDropdown();
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load projects:",
+            error
+        );
+
+        [projectIdInput, quickProjectInput].forEach(
+            (selectElement) => {
+                if (!selectElement) {
+                    return;
+                }
+
+                selectElement.replaceChildren();
+
+                const option =
+                    document.createElement("option");
+
+                option.value = "";
+                option.textContent =
+                    "Unable to load projects";
+
+                selectElement.appendChild(option);
+            }
+        );
+
+        if (projectError) {
+            projectError.textContent =
+                "Unable to load projects. Please refresh the page.";
+        }
+
+        if (quickProjectError) {
+            quickProjectError.textContent =
+                "Unable to load projects. Please refresh the page.";
+        }
+    }
+}
+
+
+// =========================================================
+// PROJECT DROPDOWN
+// =========================================================
+
+function populateProjectDropdown() {
+
+    projectIdInput.replaceChildren();
+    quickProjectInput.replaceChildren();
+
+
+    // ---------------------------------------------
+    // Default options
+    // ---------------------------------------------
+
+    const normalDefaultOption =
+        document.createElement("option");
+
+    normalDefaultOption.value = "";
+    normalDefaultOption.textContent =
+        "Select a project";
+
+
+    const quickDefaultOption =
+        document.createElement("option");
+
+    quickDefaultOption.value = "";
+    quickDefaultOption.textContent =
+        "Select a project";
+
+
+    projectIdInput.appendChild(
+        normalDefaultOption
+    );
+
+    quickProjectInput.appendChild(
+        quickDefaultOption
+    );
+
+
+    // ---------------------------------------------
+    // Projects
+    // ---------------------------------------------
+
+    projects.forEach((project) => {
+
+        const normalOption =
+            document.createElement("option");
+
+        normalOption.value =
+            project.id;
+
+        normalOption.textContent =
+            project.name;
+
+
+        const quickOption =
+            document.createElement("option");
+
+        quickOption.value =
+            project.id;
+
+        quickOption.textContent =
+            project.name;
+
+
+        projectIdInput.appendChild(
+            normalOption
+        );
+
+        quickProjectInput.appendChild(
+            quickOption
+        );
+    });
+
+
+    // ---------------------------------------------
+    // No projects
+    // ---------------------------------------------
+
+    if (projects.length === 0) {
+
+        normalDefaultOption.textContent =
+            "No projects available";
+
+        quickDefaultOption.textContent =
+            "No projects available";
+
+        projectError.textContent =
+            "Create a project before adding tasks.";
+
+        quickProjectError.textContent =
+            "Create a project before adding tasks.";
+
+    } else {
+
+        projectError.textContent = "";
+        quickProjectError.textContent = "";
+    }
+}
+
+
+// =========================================================
+// FIND PROJECT
+// =========================================================
+
+function getProjectById(projectId) {
+
+    return projects.find(
+        (project) =>
+            project.id === Number(projectId)
+    );
+}
+
+
+function getProjectName(projectId) {
+
+    const project =
+        getProjectById(projectId);
+
+    if (project) {
+        return project.name;
+    }
+
+    return `Project ${projectId}`;
 }
 
 
@@ -204,7 +402,7 @@ function createTaskElement(task) {
     statusBadge.className = "task-badge";
 
     statusBadge.textContent =
-        `Status: ${task.status}`;
+        `Status: ${task.status || "Not specified"}`;
 
 
     const dueDateBadge =
@@ -273,6 +471,25 @@ function validateTitle() {
     return true;
 }
 
+function validateProject() {
+
+    const projectId =
+        projectIdInput.value;
+
+
+    if (!projectId) {
+
+        projectError.textContent =
+            "Please select a project.";
+
+        return false;
+    }
+
+
+    projectError.textContent = "";
+
+    return true;
+}
 
 // Remove validation error as soon as the
 // user enters valid content.
@@ -281,6 +498,15 @@ titleInput.addEventListener(
     "input",
     () => {
         validateTitle();
+    }
+);
+
+// Remove project error when selected.
+
+projectIdInput.addEventListener(
+    "change",
+    () => {
+        validateProject();
     }
 );
 
@@ -295,9 +521,19 @@ taskForm.addEventListener(
 
         event.preventDefault();
 
-        if (!validateTitle()) {
+        const titleValid =
+            validateTitle();
+
+        const projectValid =
+            validateProject();
+
+
+        if (
+            !titleValid ||
+            !projectValid
+        ) {
             return;
-        }
+        }       
 
         const title = titleInput.value.trim();
 
@@ -385,6 +621,173 @@ taskForm.addEventListener(
     }
 );
 
+quickAddForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+        quickDescriptionError.textContent = "";
+        quickProjectError.textContent = "";
+        quickAddError.textContent = "";
+
+
+        // -------------------------------------------------
+        // Client-side validation
+        // -------------------------------------------------
+
+        const description =
+            quickDescriptionInput.value.trim();
+
+        const projectId =
+            quickProjectInput.value;
+
+
+        if (!description) {
+
+            quickDescriptionError.textContent =
+                "Task description is required.";
+
+            quickDescriptionInput.focus();
+
+            return;
+        }
+
+
+        if (!projectId) {
+
+            quickProjectError.textContent =
+                "Please select a project.";
+
+            quickProjectInput.focus();
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // Disable button while request is running
+        // -------------------------------------------------
+
+        quickAddButton.disabled = true;
+
+        quickAddButton.textContent =
+            "Parsing...";
+
+
+        try {
+
+            // -------------------------------------------------
+            // Call POST /tasks/quick-add
+            // -------------------------------------------------
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/tasks/quick-add`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            description:
+                                description,
+
+                            project_id:
+                                Number(projectId)
+                        })
+                    }
+                );
+
+
+            const responseData =
+                await response.json();
+
+
+            // -------------------------------------------------
+            // Handle API errors
+            // -------------------------------------------------
+
+            if (!response.ok) {
+
+                if (
+                    response.status === 422
+                ) {
+
+                    quickAddError.textContent =
+                        extractValidationError(
+                            responseData
+                        );
+
+                } else {
+
+                    quickAddError.textContent =
+                        responseData.detail ||
+                        "Unable to create task.";
+                }
+
+                return;
+            }
+
+
+            // -------------------------------------------------
+            // Task successfully created
+            // -------------------------------------------------
+
+            const createdTask =
+                responseData;
+
+
+            // Add to local state.
+
+            tasks.push(createdTask);
+
+
+            // Update cache.
+
+            saveTasksToCache();
+
+
+            // Update UI.
+
+            renderTasks();
+
+
+            // Clear Quick Add form.
+
+            quickAddForm.reset();
+
+
+            // Keep focus on description.
+
+            quickDescriptionInput.focus();
+
+
+        } catch (error) {
+
+            console.error(
+                "Quick add failed:",
+                error
+            );
+
+            quickAddError.textContent =
+                "Unable to connect to the backend.";
+        }
+
+
+        finally {
+
+            quickAddButton.disabled = false;
+
+            quickAddButton.textContent =
+                "Parse & Add Task";
+        }
+    }
+);
+
 
 // =========================================================
 // EDIT TASK
@@ -447,6 +850,51 @@ async function editTask(taskId) {
 
         return;
     }
+     // Ask user for project.
+
+    const currentProject =
+        getProjectName(
+            task.project_id
+        );
+
+
+    const projectNames =
+        projects
+            .map(
+                (project) =>
+                    `${project.id}: ${project.name}`
+            )
+            .join("\n");
+
+
+    const newProject =
+        prompt(
+            `Select project ID:\n\n${projectNames}`,
+            task.project_id
+        );
+
+
+    if (newProject === null) {
+        return;
+    }
+
+
+    const projectId =
+        Number(newProject);
+
+
+    const selectedProject =
+        getProjectById(projectId);
+
+
+    if (!selectedProject) {
+
+        alert(
+            "Invalid project selected."
+        );
+
+        return;
+    }
 
 
     try {
@@ -463,7 +911,8 @@ async function editTask(taskId) {
 
                 body: JSON.stringify({
                     title: trimmedTitle,
-                    priority: priority
+                    priority: priority,
+                    project_id: projectId
                 })
             }
         );
@@ -625,17 +1074,17 @@ async function loadTasksFromBackend() {
 // APPLICATION INITIALIZATION
 // =========================================================
 
-function initializeApp() {
-
-    // 1. Load cached tasks immediately.
-    // 2. Render them immediately.
-    // 3. Request latest data from backend.
+async function initializeApp() {
+    // Render cached tasks immediately.
 
     tasks = loadTasksFromCache();
 
     renderTasks();
 
-    loadTasksFromBackend();
+    await Promise.all([
+        loadProjects(),
+        loadTasksFromBackend()
+    ]);
 }
 
 
