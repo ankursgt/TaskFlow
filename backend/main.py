@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import case, func
 from sqlalchemy.orm import Session
 
+from algorithms.sorting import insertion_sort
 from db import Base, engine, get_db
 from models import User, Project, Task
 
@@ -31,16 +32,12 @@ from quick_add_parser import parse_quick_add
 from quick_add_prompt import build_quick_add_messages
 
 
-# =========================================================
 # DATABASE
-# =========================================================
 
 Base.metadata.create_all(bind=engine)
 
 
-# =========================================================
 # FASTAPI APPLICATION
-# =========================================================
 
 app = FastAPI(
     title="TaskFlow API",
@@ -48,9 +45,7 @@ app = FastAPI(
 )
 
 
-# =========================================================
 # CORS
-# =========================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -75,9 +70,7 @@ app.add_middleware(
 )
 
 
-# =========================================================
 # CUSTOM MIDDLEWARE
-# =========================================================
 
 @app.middleware("http")
 async def request_logging_middleware(
@@ -102,9 +95,7 @@ async def request_logging_middleware(
     return response
 
 
-# =========================================================
 # ROOT
-# =========================================================
 
 @app.get("/")
 def root():
@@ -113,9 +104,7 @@ def root():
     }
 
 
-# =========================================================
 # USERS
-# =========================================================
 
 @app.post(
     "/users",
@@ -160,9 +149,7 @@ def list_users(
     return db.query(User).all()
 
 
-# =========================================================
 # PROJECTS
-# =========================================================
 
 @app.post(
     "/projects",
@@ -207,9 +194,7 @@ def list_projects(
     return db.query(Project).all()
 
 
-# =========================================================
 # TASKS - CREATE
-# =========================================================
 
 @app.post(
     "/tasks",
@@ -248,18 +233,55 @@ def create_task(
     return task
 
 
-# =========================================================
 # TASKS - LIST
-# =========================================================
 
 @app.get(
     "/tasks",
     response_model=list[TaskResponse],
 )
 def list_tasks(
+    sort: str | None = None,
     db: Session = Depends(get_db),
 ):
-    return db.query(Task).all()
+    tasks = db.query(Task).all()
+
+    records = [
+        {
+            "id": task.id,
+            "title": task.title,
+            "priority": task.priority,
+            "due_date": task.due_date,
+            "project_id": task.project_id,
+        }
+        for task in tasks
+    ]
+     
+    # Sort by priority using our insertion_sort implementation.
+
+    if sort == "priority":
+
+        priority_rank = {
+            "low": 1,
+            "medium": 2,
+            "high": 3,
+        }
+
+        for record in records:
+            record["priority_rank"] = priority_rank[
+                record["priority"]
+            ]
+
+        insertion_sort(
+            records,
+            "priority_rank",
+        )
+
+        # Remove the internal sorting field
+        # before returning the response.
+        for record in records:
+            del record["priority_rank"]
+
+    return records
 
 @app.post(
     "/tasks/quick-add",
@@ -397,9 +419,7 @@ def task_statistics_by_project(
     ]
 
 
-# =========================================================
 # TASKS - GET BY ID
-# =========================================================
 
 @app.get(
     "/tasks/{task_id}",
@@ -424,9 +444,7 @@ def get_task(
     return task
 
 
-# =========================================================
 # TASKS - UPDATE
-# =========================================================
 
 @app.put(
     "/tasks/{task_id}",
@@ -479,9 +497,7 @@ def update_task(
     return task
 
 
-# =========================================================
 # TASKS - DELETE
-# =========================================================
 
 @app.delete(
     "/tasks/{task_id}",

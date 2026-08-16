@@ -275,6 +275,12 @@ high
 GET /tasks
 ```
 
+### List Tasks by priority
+
+```http
+GET /tasks?sort=priority
+```
+
 ### Get Task
 
 ```http
@@ -625,6 +631,25 @@ Output:
 }
 
 ---
+
+# Algorithm Verification
+
+The repository includes:
+
+check_algorithms.py
+
+This script verifies the insertion-sort implementation independently
+of the FastAPI application.
+
+Run:
+```text
+python check_algorithms.py
+```
+
+A successful run prints:
+```text
+PASS: insertion_sort correctly sorts records in place
+```
 
 # Tech Stack
 

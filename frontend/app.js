@@ -1035,7 +1035,7 @@ async function loadTasksFromBackend() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/tasks`
+            `${API_BASE_URL}/tasks?sort=priority`
         );
 
 
