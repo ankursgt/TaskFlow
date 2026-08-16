@@ -69,7 +69,7 @@ body {
    Task Form
    ========================================================= */
 
-.task-form-section {
+.task-form-section, .quick-add-section {
     margin-bottom: 28px;
     padding: 24px;
 
@@ -170,6 +170,10 @@ button {
 
     font-size: 14px;
     font-weight: 600;
+}
+
+#quick-add-button {
+    margin-top: 10px;
 }
 
 .primary-button:hover {

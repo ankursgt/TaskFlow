@@ -27,8 +27,102 @@
 
 
     <main class="app-container">
+        <!-- Quick Add Task -->
+         <section
+            class="quick-add-section"
+            aria-labelledby="quick-add-heading"
+        >
 
-        <!-- Add Task Form -->
+            <h2 id="quick-add-heading">
+                Quick Add Task
+            </h2>
+
+            <p class="section-description">
+                Describe your task naturally and let the
+                parser determine the title, priority and
+                due date.
+            </p>
+
+
+            <form
+                id="quick-add-form"
+                novalidate
+            >
+
+                <!-- Description -->
+
+                <div class="form-group">
+
+                    <label for="quick-description">
+                        Task Description
+                    </label>
+
+                    <textarea
+                        id="quick-description"
+                        name="description"
+                        rows="4"
+                        placeholder="Example: Finish the report next Friday, it's urgent"
+                        required
+                    ></textarea>
+
+                    <span
+                        id="quick-description-error"
+                        class="error-message"
+                        role="alert"
+                    ></span>
+
+                </div>
+
+
+                <!-- Project -->
+
+                <div class="form-group">
+                    <label for="quick-project-id">
+                        Project
+                    </label>
+
+                    <select
+                        id="quick-project-id"
+                        name="project_id"
+                        required
+                    >
+                        <option value="">
+                            Loading projects...
+                        </option>
+                    </select>
+
+                    <span
+                        id="quick-project-error"
+                        class="error-message"
+                        role="alert"
+                    ></span>
+
+                </div>
+
+
+                <!-- Submit -->
+
+                <button
+                    type="submit"
+                    id="quick-add-button"
+                    class="primary-button"
+                >
+                    Parse &amp; Add Task
+                </button>
+
+
+                <!-- API Error -->
+
+                <p
+                    id="quick-add-error"
+                    class="error-message"
+                    role="alert"
+                ></p>
+
+            </form>
+
+        </section>
+        <!--Add Task -->
         <section
             class="task-form-section"
             aria-labelledby="add-task-heading"
@@ -57,8 +151,8 @@
                         class="error-message"
                         role="alert"
                     ></span>
-                </div>
 
+                </div>
 
                 <div class="form-group">
                     <label for="priority">
@@ -85,8 +179,6 @@
                         </option>
                     </select>
                 </div>
-
-
                 <div class="form-group">
                     <label for="due-date">
                         Due Date
@@ -100,20 +192,29 @@
                     >
                 </div>
 
+                <!-- Project -->
 
                 <div class="form-group">
                     <label for="project-id">
-                        Project ID
+                        Project
                     </label>
 
-                    <input
-                        type="number"
+                    <select
                         id="project-id"
                         name="project_id"
-                        min="1"
-                        placeholder="Project ID"
-                        value="1"
+                        required
                     >
+                        <option value="">
+                            Loading projects...
+                        </option>
+                    </select>
+
+                    <span
+                        id="project-error"
+                        class="error-message"
+                        role="alert"
+                    ></span>
+
                 </div>
 
 
@@ -129,7 +230,6 @@
         </section>
 
 
-        <!-- Task List -->
         <section
             class="task-list-section"
             aria-labelledby="task-list-heading"
@@ -146,12 +246,10 @@
                     0 tasks
                 </span>
             </div>
-
             <div
                 id="task-list"
                 class="task-list"
             >
-                <!-- Tasks are rendered here by JavaScript -->
             </div>
 
             <p

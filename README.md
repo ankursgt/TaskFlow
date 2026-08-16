@@ -345,10 +345,9 @@ The statistics are calculated using SQL aggregation with `COUNT`, `SUM`, `CASE`,
 
 # Database
 
-The default database is SQLite:
-
+Database used is Supabase with URL:
 ```text
-app.db
+"postgresql://postgres.zuaueheflpxczyzousrs:<password>@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
 ```
 
 It is automatically created when the FastAPI application starts.
@@ -546,6 +545,84 @@ The API uses standard HTTP status codes:
 | `404` | Resource not found |
 | `409` | Duplicate user email |
 | `422` | Request validation failed |
+
+---
+
+# Quick Add Parser
+
+The quick-add parser uses a zero-shot prompting approach. The system prompt describes the expected parsing behavior without providing example demonstrations. The deterministic mock implements the same rules directly so the feature works without an API key or network call.
+
+Zero-shot is appropriate here because the expected output has a small, explicitly defined schema and closed vocabulary. It also minimizes prompt tokens compared with few-shot prompting, while the deterministic rules provide stronger response reliability than relying on an LLM to infer the rules. Chain-of-thought is intentionally not used because intermediate reasoning is unnecessary for this deterministic classification and extraction task.
+
+Example 1
+
+Input:
+
+This is urgent, mark it ASAP please
+
+Output:
+
+{
+  "title": "This is , mark it please",
+  "priority": "high",
+  "due_date_hint": null
+}
+Example 2
+
+Input:
+
+
+
+
+Output:
+
+{
+  "title": "Untitled task",
+  "priority": "medium",
+  "due_date_hint": null
+}
+
+For a whitespace-only input such as " ", the same output is produced.
+
+Example 3
+
+Input:
+
+Finish the report next Friday, it's urgent
+
+Output:
+
+{
+  "title": "Finish the report , it's",
+  "priority": "high",
+  "due_date_hint": "next friday"
+}
+Example 4
+
+Input:
+
+tomorrow review tomorrow
+
+Output:
+
+{
+  "title": "review",
+  "priority": "medium",
+  "due_date_hint": "tomorrow"
+}
+Example 5
+
+Input:
+
+Prepare the presentation whenever next Monday
+
+Output:
+
+{
+  "title": "Prepare the presentation",
+  "priority": "low",
+  "due_date_hint": "next monday"
+}
 
 ---
 

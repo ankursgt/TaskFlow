@@ -7,6 +7,8 @@ from pydantic import (
     field_validator,
 )
 
+from typing import Optional
+
 
 # =========================================================
 # USER
@@ -132,3 +134,34 @@ class ProjectTaskStats(BaseModel):
     pending_count: int
     in_progress_count: int
     completed_count: int
+
+class QuickAddRequest(BaseModel):
+    description: str
+    project_id: int = Field(gt=0)
+
+    @field_validator("description")
+    @classmethod
+    def validate_description(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("description cannot be blank")
+
+        return value
+
+
+class QuickAddParsedTask(BaseModel):
+    title: str
+    priority: str = Field(
+        pattern="^(low|medium|high)$"
+    )
+    due_date_hint: Optional[str] = None
+
+
+class TaskResponse(BaseModel):
+    id: int
+    title: str
+    priority: str
+    due_date: Optional[str] = None
+    project_id: int
+
+    class Config:
+        from_attributes = True

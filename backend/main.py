@@ -24,7 +24,11 @@ from schemas import (
     TaskUpdate,
     TaskResponse,
     ProjectTaskStats,
+    QuickAddRequest,
+    TaskResponse,
 )
+from quick_add_parser import parse_quick_add
+from quick_add_prompt import build_quick_add_messages
 
 
 # =========================================================
@@ -257,13 +261,79 @@ def list_tasks(
 ):
     return db.query(Task).all()
 
+@app.post(
+    "/tasks/quick-add",
+    response_model=TaskResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def quick_add_task(
+    request: QuickAddRequest,
+    db: Session = Depends(get_db),
+):
 
-# =========================================================
-# TASK STATISTICS
-#
-# IMPORTANT:
-# This endpoint must be defined BEFORE /tasks/{task_id}
-# =========================================================
+    messages = build_quick_add_messages(
+        request.description
+    )
+
+    # Prevent unused-variable issues while documenting
+    # the intended prompt structure.
+    _ = messages
+
+    project = (
+        db.query(Project)
+        .filter(Project.id == request.project_id)
+        .first()
+    )
+
+    if project is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "project_id": (
+                    f"Project {request.project_id} does not exist"
+                )
+            },
+        )
+
+
+    parsed = parse_quick_add(
+        request.description
+    )
+
+    # Construct the object that will be persisted.
+
+    task_data = {
+        "title": parsed.title,
+        "priority": parsed.priority,
+        "due_date": parsed.due_date_hint,
+        "project_id": request.project_id,
+    }
+
+
+    validated_task = TaskResponse.model_validate(
+        {
+            "id": 0,
+            **task_data,
+        }
+    )
+
+    #  Create actual SQLAlchemy row.
+
+    task = Task(
+        title=validated_task.title,
+        priority=validated_task.priority,
+        due_date=validated_task.due_date,
+        project_id=validated_task.project_id,
+    )
+
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+
+
+    # Return actual persisted task.
+
+    return task
 
 @app.get(
     "/tasks/statistics/by-project",
