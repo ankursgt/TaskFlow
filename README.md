@@ -567,12 +567,13 @@ Input:
 This is urgent, mark it ASAP please
 
 Output:
-
+```text
 {
   "title": "This is , mark it please",
   "priority": "high",
   "due_date_hint": null
 }
+```
 Example 2
 
 Input:
@@ -581,13 +582,13 @@ Input:
 
 
 Output:
-
+```text
 {
   "title": "Untitled task",
   "priority": "medium",
   "due_date_hint": null
 }
-
+```
 For a whitespace-only input such as " ", the same output is produced.
 
 Example 3
@@ -597,12 +598,13 @@ Input:
 Finish the report next Friday, it's urgent
 
 Output:
-
+```text
 {
   "title": "Finish the report , it's",
   "priority": "high",
   "due_date_hint": "next friday"
 }
+```
 Example 4
 
 Input:
@@ -610,12 +612,13 @@ Input:
 tomorrow review tomorrow
 
 Output:
-
+```text
 {
   "title": "review",
   "priority": "medium",
   "due_date_hint": "tomorrow"
 }
+```
 Example 5
 
 Input:
@@ -623,13 +626,13 @@ Input:
 Prepare the presentation whenever next Monday
 
 Output:
-
+```text
 {
   "title": "Prepare the presentation",
   "priority": "low",
   "due_date_hint": "next monday"
 }
-
+```
 ---
 
 # Algorithm Verification
@@ -666,7 +669,3 @@ PASS: insertion_sort correctly sorts records in place
 - Browser Local Storage
 
 ---
-
-# License
-
-Add your preferred license here, for example MIT License.
